@@ -11,39 +11,43 @@ const countryContainer = document.querySelector('.country-info');
 searchInput.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(e) {
-  e.preventDefault();
-
   if (e.target.value.trim() === '') {
     countriesList.innerHTML = '';
+    countryContainer.innerHTML = '';
 
     return;
   }
 
   fetchCountries(e.target.value)
     .then(response => {
-      if (response.length > 10) {
-        Notiflix.Notify.warning(
-          'Too many matches found. Please enter a more specific name.'
-        );
-        countryContainer.innerHTML = '';
-        return;
-      } else if (response.length > 2 && response.length <= 10) {
-        console.log(response);
-        countryContainer.innerHTML = '';
-        const countriesNames = response
-          .map(({ name: { common }, flags: { svg } }) => {
-            return `<li class ="flag-name"><img src="${svg}" alt="${common}" width = 25 height = 15 /><h2>${common}</h2></li>`;
-          })
-          .join('');
-        countriesList.innerHTML = countriesNames;
-        return;
-      }
-      countryContainer.innerHTML = createMarkup(response);
+      filterInformation(response, response.length);
     })
     .catch(err => {
       console.log(err);
       Notiflix.Notify.failure('Oops, there is no country with that name');
     });
+}
+
+function filterInformation(countriesArr, number) {
+  if (number > 10) {
+    Notiflix.Notify.warning(
+      'Too many matches found. Please enter a more specific name.'
+    );
+    countryContainer.innerHTML = '';
+
+    return;
+  } else if (number > 2 && number <= 10) {
+    countryContainer.innerHTML = '';
+    countriesList.innerHTML = countriesArr
+      .map(({ name: { common }, flags: { svg } }) => {
+        return `<li class ="flag-name"><img src="${svg}" alt="${common}" width = 25 height = 15 /><h2>${common}</h2></li>`;
+      })
+      .join('');
+
+    return;
+  }
+  countriesList.innerHTML = '';
+  countryContainer.innerHTML = createMarkup(countriesArr);
 }
 
 function createMarkup(countries) {

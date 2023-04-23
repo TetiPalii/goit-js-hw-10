@@ -25,6 +25,8 @@ function onInput(e) {
     .catch(err => {
       console.log(err);
       Notiflix.Notify.failure('Oops, there is no country with that name');
+      countriesList.innerHTML = '';
+      countryContainer.innerHTML = '';
     });
 }
 
@@ -34,6 +36,7 @@ function filterInformation(countriesArr, number) {
       'Too many matches found. Please enter a more specific name.'
     );
     countryContainer.innerHTML = '';
+    countriesList.innerHTML = '';
 
     return;
   } else if (number > 2 && number <= 10) {

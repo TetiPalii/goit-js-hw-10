@@ -11,14 +11,15 @@ const countryContainer = document.querySelector('.country-info');
 searchInput.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(e) {
-  if (e.target.value.trim() === '') {
+  const searchValue = e.target.value.trim();
+  if (!searchValue) {
     countriesList.innerHTML = '';
     countryContainer.innerHTML = '';
 
     return;
   }
 
-  fetchCountries(e.target.value)
+  fetchCountries(searchValue)
     .then(response => {
       filterInformation(response, response.length);
     })
